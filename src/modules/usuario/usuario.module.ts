@@ -19,6 +19,14 @@ import { hashSync } from 'bcrypt';
             }
             next();
           });
+
+          schema.pre('updateOne', async function (next) {
+            if (this.isModified('password')) {
+              this.password = hashSync(this.password, 10);
+              next();
+            }
+            next();
+          });
           return schema;
         },
       },
@@ -26,5 +34,6 @@ import { hashSync } from 'bcrypt';
   ],
   controllers: [UsuarioController],
   providers: [UsuarioService],
+  exports: [UsuarioService],
 })
 export class UsuarioModule {}

@@ -30,7 +30,7 @@ export class UsuarioService {
     }
   }
 
-  async findOne(id: number): Promise<Usuario> {
+  async findOne(id: string): Promise<Usuario> {
     const usuario = await this.usuarioModel.findById(id);
     if (!usuario) throw new NotFoundException('Usuario no encontrado');
     usuario.password = undefined;
@@ -39,5 +39,14 @@ export class UsuarioService {
 
   async findAll(): Promise<Usuario[]> {
     return this.usuarioModel.find().exec();
+  }
+
+  async findByEmail(email: string) {
+    const usuario = await this.usuarioModel.findOne({ email });
+    if (!usuario)
+      throw new NotFoundException(
+        `Ningun usuario con email ${email} encontrado`,
+      );
+    return usuario;
   }
 }

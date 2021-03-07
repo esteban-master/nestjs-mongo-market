@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UsuarioModule } from './modules/usuario/usuario.module';
 import { TiendaModule } from './modules/tienda/tienda.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -11,7 +11,7 @@ import { TiendaModule } from './modules/tienda/tienda.module';
       useUnifiedTopology: true,
       useFindAndModify: false,
     }),
-    UsuarioModule,
+    AuthModule,
     TiendaModule,
   ],
   controllers: [],

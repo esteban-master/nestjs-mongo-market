@@ -13,7 +13,7 @@ export class UsuarioController {
   }
 
   @Get('/:usuarioId')
-  getUsuario(@Param('usuarioId') usuarioId: number): Promise<Usuario> {
+  getUsuario(@Param('usuarioId') usuarioId: string): Promise<Usuario> {
     return this.usuariosService.findOne(usuarioId);
   }
 
