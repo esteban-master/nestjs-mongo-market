@@ -1,16 +1,19 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+// import { MongooseModule } from '@nestjs/mongoose';
 import { TiendaModule } from './modules/tienda/tienda.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from './config/database/database.module';
+
+import databaseConfig from './config/database/database.config';
+import jwtConfig from './common/jwt/jwt.config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/nestjs', {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false,
+    ConfigModule.forRoot({
+      load: [databaseConfig, jwtConfig],
     }),
+    DatabaseModule,
     AuthModule,
     TiendaModule,
   ],

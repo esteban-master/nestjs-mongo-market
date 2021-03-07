@@ -13,7 +13,7 @@ export class TiendaService {
 
   async create(createTiendaDto: CreateTiendaDto): Promise<Tienda> {
     const newTienda = new this.tiendaModel(createTiendaDto);
-    newTienda.propietario = Types.ObjectId('6042a61f39885f483c617a89');
+    newTienda.propietario = Types.ObjectId('60454d145fe0da4478487e56');
     return await newTienda.save();
   }
 

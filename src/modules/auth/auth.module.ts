@@ -5,14 +5,24 @@ import { UsuarioModule } from '../usuario/usuario.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy, LocalStrategy } from './strategies';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule,
     UsuarioModule,
     PassportModule,
-    JwtModule.register({
-      secret: 'mi-secretito',
-      signOptions: { expiresIn: '5m' },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          secret: configService.get('jwt_config.secret'),
+          signOptions: {
+            expiresIn: configService.get('jwt_config.expire'),
+          },
+        };
+      },
+      inject: [ConfigService],
     }),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
