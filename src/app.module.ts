@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsuarioModule } from './modules/usuario/usuario.module';
-// import { TiendaModule } from './modules/tienda/tienda.module';
+import { TiendaModule } from './modules/tienda/tienda.module';
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { UsuarioModule } from './modules/usuario/usuario.module';
       useFindAndModify: false,
     }),
     UsuarioModule,
-    // TiendaModule,
+    TiendaModule,
   ],
   controllers: [],
   providers: [],

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/createUsuario.dto';
 import { Usuario } from './schemas/usuario.shema';
 import { UsuarioService } from './usuario.service';
@@ -8,14 +8,17 @@ export class UsuarioController {
   constructor(private usuariosService: UsuarioService) {}
 
   @Get()
-  async getUsuarios(): Promise<Usuario[]> {
+  getUsuarios(): Promise<Usuario[]> {
     return this.usuariosService.findAll();
   }
 
+  @Get('/:usuarioId')
+  getUsuario(@Param('usuarioId') usuarioId: number): Promise<Usuario> {
+    return this.usuariosService.findOne(usuarioId);
+  }
+
   @Post()
-  async createUsuario(
-    @Body() createUsuarioDto: CreateUsuarioDto,
-  ): Promise<Usuario> {
+  createUsuario(@Body() createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
     return this.usuariosService.create(createUsuarioDto);
   }
 }

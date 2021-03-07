@@ -1,6 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Usuario } from '../../usuario/schemas/usuario.shema';
 
 @Schema()
 export class Tienda extends Document {
@@ -14,10 +13,13 @@ export class Tienda extends Document {
   image: string;
 
   @Prop({ type: Types.ObjectId, ref: 'Usuario' })
-  propietario: Usuario;
+  propietario: Types.ObjectId;
 
   @Prop({ default: Date.now })
   createdAt: Date;
+
+  @Prop()
+  updatedAt: Date;
 }
 
 export const TiendaSchema = SchemaFactory.createForClass(Tienda);

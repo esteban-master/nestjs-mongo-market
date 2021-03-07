@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -17,7 +18,9 @@ export class UsuarioService {
   async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
     try {
       const newUsuario = new this.usuarioModel(createUsuarioDto);
-      return await newUsuario.save();
+      await newUsuario.save();
+      newUsuario.password = undefined;
+      return newUsuario;
     } catch (error) {
       if (error.code === 11000)
         throw new BadRequestException(
@@ -25,6 +28,13 @@ export class UsuarioService {
         );
       throw new InternalServerErrorException();
     }
+  }
+
+  async findOne(id: number): Promise<Usuario> {
+    const usuario = await this.usuarioModel.findById(id);
+    if (!usuario) throw new NotFoundException('Usuario no encontrado');
+    usuario.password = undefined;
+    return usuario;
   }
 
   async findAll(): Promise<Usuario[]> {
