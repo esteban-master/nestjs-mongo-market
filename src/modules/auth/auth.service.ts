@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Usuario } from '../usuario/schemas/usuario.shema';
 import { UsuarioService } from '../usuario/usuario.service';
 import { compare } from 'bcrypt';
@@ -17,16 +17,16 @@ export class AuthService {
       usuario.password,
     );
 
-    if (usuario && passwordMatch) {
-      usuario.password = undefined;
-      return usuario;
-    }
-    return null;
+    if (!passwordMatch) throw new UnauthorizedException('Password incorrecto');
+
+    usuario.password = undefined;
+    return usuario;
   }
 
   async login(user: Usuario) {
     const payload = { _id: user._id };
     return {
+      user,
       access_token: this.jwtService.sign(payload),
     };
   }

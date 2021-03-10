@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards } from '@nestjs/common';
 
 import { GetModel } from 'src/common/decorators/model.decorator';
 import { Usuario } from '../usuario/schemas/usuario.shema';
@@ -17,7 +17,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/profile')
-  getProfile(@Request() req) {
-    return req.user;
+  getProfile(@GetModel('user') usuario: Usuario) {
+    return usuario;
   }
 }

@@ -12,8 +12,8 @@ export class Usuario extends Document {
   @Prop()
   password: string;
 
-  @Prop({ default: false })
-  vendedor: boolean;
+  @Prop([String])
+  roles: string[];
 
   @Prop({ default: Date.now })
   createdAt: Date;

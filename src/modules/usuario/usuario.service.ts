@@ -8,6 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Usuario } from './schemas/usuario.shema';
 import { CreateUsuarioDto } from './dto/createUsuario.dto';
+import { AppRoles } from 'src/app.roles';
 
 @Injectable()
 export class UsuarioService {
@@ -16,8 +17,10 @@ export class UsuarioService {
   ) {}
 
   async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
+    createUsuarioDto.roles = undefined;
     try {
       const newUsuario = new this.usuarioModel(createUsuarioDto);
+      newUsuario.roles.push(AppRoles.NORMAL);
       await newUsuario.save();
       newUsuario.password = undefined;
       return newUsuario;

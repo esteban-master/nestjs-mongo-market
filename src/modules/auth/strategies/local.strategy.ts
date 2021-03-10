@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { Usuario } from '../../usuario/schemas/usuario.shema';
@@ -10,9 +10,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super({ usernameField: 'email' });
   }
 
+  // El validate()método para cualquier estrategia de Passport seguirá un patrón similar, variando solo en los detalles de cómo se representan las credenciales. Si se encuentra un usuario y las credenciales son válidas, se devuelve el usuario para que Passport pueda completar sus tareas (por ejemplo, crear la userpropiedad en el Requestobjeto) y la canalización de manejo de solicitudes puede continuar. Si no se encuentra, lanzamos una excepción
   async validate(email: string, password: string): Promise<Usuario> {
-    const usuario = await this.authService.validateUsuario(email, password);
-    if (!usuario) throw new UnauthorizedException();
-    return usuario;
+    return await this.authService.validateUsuario(email, password);
   }
 }
