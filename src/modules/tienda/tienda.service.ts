@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -7,9 +6,9 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateTiendaDto } from './dto/createTienda.dto';
-import { Tienda } from './shemas/tienda.shema';
+import { Tienda } from './schema/tienda.shema';
 import { Types } from 'mongoose';
-import { Usuario } from '../usuario/schemas/usuario.shema';
+import { Usuario } from '../usuario/schema/usuario.shema';
 import { EditTiendaDto } from './dto/editTienda.dto';
 
 @Injectable()
@@ -23,12 +22,14 @@ export class TiendaService {
     usuarioPeticion: Usuario,
   ): Promise<Tienda> {
     const newTienda = new this.tiendaModel(createTiendaDto);
-    newTienda.propietario = Types.ObjectId(usuarioPeticion._id);
+    newTienda.propietario = usuarioPeticion._id;
     return await newTienda.save();
   }
 
   async findOne(tiendaId: string): Promise<Tienda> {
-    const findTienda = await this.tiendaModel.findOne({ _id: tiendaId });
+    const findTienda = await this.tiendaModel
+      .findOne({ _id: tiendaId })
+      .populate('propietario', '_id name');
     if (!findTienda) throw new NotFoundException('Tienda no encontrada');
 
     return findTienda;
@@ -70,7 +71,7 @@ export class TiendaService {
 
   private esPropietario(
     idPropietario: Types.ObjectId | string,
-    idUsuarioPeticion: Types.ObjectId,
+    idUsuarioPeticion: string,
     mensajeError?: string,
   ): boolean {
     const isMatch = String(idPropietario) === String(idUsuarioPeticion);

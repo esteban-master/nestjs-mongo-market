@@ -1,10 +1,8 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-type ModelsTypes = 'user' | 'producto';
-
-export const GetModel = createParamDecorator(
-  (model: ModelsTypes, ctx: ExecutionContext) => {
+export const User = createParamDecorator(
+  (value: string, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
-    return request[model];
+    return request.user;
   },
 );

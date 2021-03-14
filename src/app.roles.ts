@@ -10,6 +10,7 @@ export enum AppRoles {
 export enum AppRecursos {
   USUARIO = 'USUARIO',
   TIENDA = 'TIENDA',
+  PRODUCTO = 'PRODUCTO',
 }
 
 roles
@@ -20,7 +21,7 @@ roles
   // Roles Usuario Vendedor
   .grant(AppRoles.VENDEDOR)
   .extend(AppRoles.NORMAL)
-  .createOwn(AppRecursos.TIENDA)
-  .updateOwn(AppRecursos.TIENDA)
-  .deleteOwn(AppRecursos.TIENDA)
-  .readOwn(AppRecursos.TIENDA);
+  .createOwn([AppRecursos.TIENDA, AppRecursos.PRODUCTO])
+  .updateOwn([AppRecursos.TIENDA, AppRecursos.PRODUCTO])
+  .deleteOwn([AppRecursos.TIENDA, AppRecursos.PRODUCTO])
+  .readOwn([AppRecursos.TIENDA, AppRecursos.PRODUCTO]);

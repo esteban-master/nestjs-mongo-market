@@ -1,13 +1,13 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 
 import { AppRecursos } from 'src/app.roles';
-import { AuthWithRoles, GetModel } from 'src/common/decorators';
+import { AuthWithRoles, User } from 'src/common/decorators';
 import { IsValidId } from 'src/common/pipes';
 
-import { Usuario } from '../usuario/schemas/usuario.shema';
+import { Usuario } from '../usuario/schema/usuario.shema';
 import { CreateTiendaDto } from './dto/createTienda.dto';
 import { EditTiendaDto } from './dto/editTienda.dto';
-import { Tienda } from './shemas/tienda.shema';
+import { Tienda } from './schema';
 import { TiendaService } from './tienda.service';
 
 @Controller('tiendas')
@@ -33,7 +33,7 @@ export class TiendaController {
     resource: AppRecursos.TIENDA,
   })
   getTiendasPropietario(
-    @GetModel('user') usuarioPeticion: Usuario,
+    @User() usuarioPeticion: Usuario,
     @Param('usuarioId', IsValidId) usuarioId: string,
   ): Promise<Tienda[]> {
     return this.tiendaService.findByPropietario(usuarioId, usuarioPeticion);
@@ -47,7 +47,7 @@ export class TiendaController {
   })
   createTienda(
     @Body() createTiendaDto: CreateTiendaDto,
-    @GetModel('user') usuarioPeticion: Usuario,
+    @User() usuarioPeticion: Usuario,
   ): Promise<Tienda> {
     return this.tiendaService.create(createTiendaDto, usuarioPeticion);
   }
@@ -61,7 +61,7 @@ export class TiendaController {
   updateTienda(
     @Param('tiendaId', IsValidId) tiendaId: string,
     @Body() editTiendaDto: EditTiendaDto,
-    @GetModel('user') usuario: Usuario,
+    @User() usuario: Usuario,
   ) {
     return this.tiendaService.update(tiendaId, editTiendaDto, usuario);
   }
