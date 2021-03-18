@@ -13,6 +13,7 @@ import { ProductoModule } from './modules/producto/producto.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
       load: [databaseConfig, jwtConfig],
     }),
     AccessControlModule.forRoles(roles),
