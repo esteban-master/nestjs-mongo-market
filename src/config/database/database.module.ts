@@ -6,7 +6,12 @@ import { MongooseConfigService } from './database.config.service';
 @Module({
   imports: [
     MongooseModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          envFilePath: `.env.development`,
+        }),
+      ],
       useClass: MongooseConfigService,
     }),
   ],
