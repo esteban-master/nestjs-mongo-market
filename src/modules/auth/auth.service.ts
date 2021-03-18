@@ -3,7 +3,6 @@ import { Usuario } from '../usuario/schema/usuario.shema';
 import { UsuarioService } from '../usuario/usuario.service';
 import { compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import cookie from 'cookie';
 @Injectable()
 export class AuthService {
   constructor(
