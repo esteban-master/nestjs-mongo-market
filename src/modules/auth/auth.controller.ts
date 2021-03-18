@@ -30,8 +30,8 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 7200,
       path: '/',
+      domain: 'https://martket-ts-nestjs.vercel.app',
     });
     res.status(200);
     return usuarioLogin;
