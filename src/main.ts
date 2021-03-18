@@ -9,7 +9,10 @@ async function bootstrap() {
   // Para validar globalmente el class vlaidator en los DTO
   app.enableCors({
     credentials: true,
-    origin: 'http://localhost:3001',
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? 'https://martket-ts-nestjs.vercel.app'
+        : 'http://localhost:3001',
   });
 
   app.use(cookieParser());
