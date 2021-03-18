@@ -15,6 +15,9 @@ export class Producto extends Document {
   @Prop()
   cantidad: number;
 
+  @Prop()
+  price: number;
+
   @Prop({ type: Types.ObjectId, ref: 'Tienda' })
   tienda: Types.ObjectId;
 

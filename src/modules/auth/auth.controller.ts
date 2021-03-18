@@ -14,7 +14,6 @@ export class AuthController {
   salir(@Res() res: Response) {
     res.clearCookie('auth');
     res.status(200);
-    console.log('saliendpo jkajajajaja');
     return res.json({
       mensaje: 'Sesion cerrada',
     });

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 
 import { AppRecursos } from 'src/app.roles';
 import { AuthWithRoles, User } from 'src/common/decorators';
@@ -45,11 +53,21 @@ export class TiendaController {
     action: 'create',
     resource: AppRecursos.TIENDA,
   })
-  createTienda(
+  async createTienda(
     @Body() createTiendaDto: CreateTiendaDto,
     @User() usuarioPeticion: Usuario,
-  ): Promise<Tienda> {
-    return this.tiendaService.create(createTiendaDto, usuarioPeticion);
+  ) {
+    const newTienda = await this.tiendaService.create(
+      createTiendaDto,
+      usuarioPeticion,
+    );
+    return {
+      ...newTienda['_doc'],
+      propietario: {
+        _id: usuarioPeticion._id,
+        name: usuarioPeticion.name,
+      },
+    };
   }
 
   @Put('/:tiendaId')
@@ -64,5 +82,24 @@ export class TiendaController {
     @User() usuario: Usuario,
   ) {
     return this.tiendaService.update(tiendaId, editTiendaDto, usuario);
+  }
+
+  @Delete('/:tiendaId')
+  @AuthWithRoles({
+    possession: 'own',
+    action: 'delete',
+    resource: AppRecursos.TIENDA,
+  })
+  async deleteTienda(
+    @Param('tiendaId', IsValidId) tiendaId: string,
+    @User() usuarioPeticion: Usuario,
+  ): Promise<{ _id: string }> {
+    const tiendaEliminada = await this.tiendaService.delete(
+      tiendaId,
+      usuarioPeticion,
+    );
+    return {
+      _id: tiendaEliminada._id,
+    };
   }
 }

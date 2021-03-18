@@ -6,9 +6,10 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { AppRecursos } from 'src/app.roles';
-import { Params } from 'src/common/constants';
+import { ListarQuery, Params } from 'src/common/constants';
 import { AuthWithRoles, User } from 'src/common/decorators';
 import { IsValidId } from 'src/common/pipes';
 import { Usuario } from '../usuario/schema/usuario.shema';
@@ -20,18 +21,18 @@ export class ProductoController {
   constructor(private productoService: ProductoService) {}
 
   @Get()
-  findAll() {
-    return this.productoService.findAll();
-  }
-
-  @Get('/:productoId')
-  getOne(@Param('productoId', IsValidId) productoId: string) {
-    return this.productoService.findOne(productoId);
+  listar(@Query() queries: ListarQuery) {
+    return this.productoService.listar(queries);
   }
 
   @Get('/categorias')
   findCategorias() {
     return this.productoService.getCategorias();
+  }
+
+  @Get('/:productoId')
+  getOne(@Param('productoId', IsValidId) productoId: string) {
+    return this.productoService.findOne(productoId);
   }
 
   @Get('/by/:tiendaId')

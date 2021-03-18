@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Params } from 'src/common/constants';
+import { ListarQuery, Params } from 'src/common/constants';
 import { TiendaService } from '../tienda/tienda.service';
 import { Usuario } from '../usuario/schema/usuario.shema';
 import { CreateProductoDto } from './dto';
@@ -18,9 +18,21 @@ export class ProductoService {
     private tiendaService: TiendaService,
   ) {}
 
-  async findAll(): Promise<Producto[]> {
+  async listar(queries: ListarQuery): Promise<Producto[]> {
+    const query: {
+      name?: { $regex: string; $options: string };
+      categoria?: string;
+    } = {};
+    if (queries.buscar) {
+      query.name = { $regex: queries.buscar, $options: 'i' };
+    }
+
+    if (queries.categoria && queries.categoria !== 'All') {
+      query.categoria = queries.categoria.toString();
+    }
+
     return await this.productoModel
-      .find()
+      .find(query)
       .populate('tienda', '_id name')
       .exec();
   }
@@ -50,7 +62,14 @@ export class ProductoService {
 
     const newProducto = new this.productoModel(createProductoDto);
     newProducto.tienda = tienda._id;
-    return await newProducto.save();
+    await newProducto.save();
+    return {
+      ...newProducto['_doc'],
+      tienda: {
+        _id: tienda._id,
+        name: tienda.name,
+      },
+    };
   }
 
   async findByTienda(tiendaId: string) {

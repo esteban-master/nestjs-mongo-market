@@ -26,10 +26,18 @@ export class TiendaService {
     return await newTienda.save();
   }
 
-  async findOne(tiendaId: string): Promise<Tienda> {
-    const findTienda = await this.tiendaModel
-      .findOne({ _id: tiendaId })
-      .populate('propietario', '_id name');
+  async findOne(
+    tiendaId: string,
+    populatePropietario?: boolean,
+  ): Promise<Tienda> {
+    let findTienda = null;
+    if (populatePropietario) {
+      findTienda = await this.tiendaModel
+        .findOne({ _id: tiendaId })
+        .populate('propietario', '_id name');
+    } else {
+      findTienda = await this.tiendaModel.findOne({ _id: tiendaId });
+    }
     if (!findTienda) throw new NotFoundException('Tienda no encontrada');
 
     return findTienda;
@@ -67,6 +75,14 @@ export class TiendaService {
 
     const editTienda = Object.assign(findTienda, editDto);
     return await editTienda.save();
+  }
+
+  async delete(tiendaId: string, usuarioPeticion: Usuario) {
+    const tienda = await this.findOne(tiendaId);
+    if (String(tienda.propietario) !== String(usuarioPeticion._id))
+      throw new UnauthorizedException('Usuario no es propietario de la tienda');
+
+    return await tienda.remove();
   }
 
   private esPropietario(
