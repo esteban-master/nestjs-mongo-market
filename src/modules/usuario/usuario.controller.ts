@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { User } from 'src/common/decorators/model.decorator';
+import { User } from 'src/common/decorators/';
 import { IsValidId } from 'src/common/pipes';
 import { JwtAuthGuard } from '../auth/guards';
 import { CreateUsuarioDto } from './dto/createUsuario.dto';

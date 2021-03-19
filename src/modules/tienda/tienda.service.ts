@@ -47,12 +47,7 @@ export class TiendaService {
     return await this.tiendaModel.find().populate('propietario', '_id name');
   }
 
-  async findByPropietario(
-    usuarioId: string,
-    idUsuarioPeticion: Usuario,
-  ): Promise<Tienda[]> {
-    this.esPropietario(usuarioId, idUsuarioPeticion._id);
-
+  async findByPropietario(usuarioId: string): Promise<Tienda[]> {
     return await this.tiendaModel
       .find({
         propietario: Types.ObjectId(usuarioId),
@@ -60,28 +55,12 @@ export class TiendaService {
       .populate('propietario', '_id name');
   }
 
-  async update(
-    tiendaId: string,
-    editDto: EditTiendaDto,
-    usuarioPeticion: Usuario,
-  ): Promise<Tienda> {
-    const findTienda = await this.findOne(tiendaId);
-
-    this.esPropietario(
-      findTienda.propietario,
-      usuarioPeticion._id,
-      `Solo puedes editar tus tiendas`,
-    );
-
-    const editTienda = Object.assign(findTienda, editDto);
+  async update(tienda: Tienda, editDto: EditTiendaDto): Promise<Tienda> {
+    const editTienda = Object.assign(tienda, editDto);
     return await editTienda.save();
   }
 
-  async delete(tiendaId: string, usuarioPeticion: Usuario) {
-    const tienda = await this.findOne(tiendaId);
-    if (String(tienda.propietario) !== String(usuarioPeticion._id))
-      throw new UnauthorizedException('Usuario no es propietario de la tienda');
-
+  async delete(tienda: Tienda) {
     return await tienda.remove();
   }
 

@@ -34,14 +34,13 @@ export class UsuarioService {
   }
 
   async findOne(id: string): Promise<Usuario> {
-    const usuario = await this.usuarioModel.findById(id);
+    const usuario = await this.usuarioModel.findById(id, '-password');
     if (!usuario) throw new NotFoundException('Usuario no encontrado');
-    usuario.password = undefined;
     return usuario;
   }
 
   async findAll(): Promise<Usuario[]> {
-    return this.usuarioModel.find().exec();
+    return this.usuarioModel.find({}, '-password').exec();
   }
 
   async findByEmail(email: string) {

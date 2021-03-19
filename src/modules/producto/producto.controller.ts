@@ -10,11 +10,18 @@ import {
 } from '@nestjs/common';
 import { AppRecursos } from 'src/app.roles';
 import { ListarQuery, Params } from 'src/common/constants';
-import { AuthWithRoles, User } from 'src/common/decorators';
+import {
+  AuthWithRoles,
+  ProductoReq,
+  TiendaReq,
+  User,
+} from 'src/common/decorators';
 import { IsValidId } from 'src/common/pipes';
+import { Tienda } from '../tienda/schema';
 import { Usuario } from '../usuario/schema/usuario.shema';
 import { CreateProductoDto } from './dto';
 import { ProductoService } from './producto.service';
+import { Producto } from './schema';
 
 @Controller('productos')
 export class ProductoController {
@@ -46,12 +53,8 @@ export class ProductoController {
     action: 'create',
     resource: AppRecursos.PRODUCTO,
   })
-  create(
-    @Body() body: CreateProductoDto,
-    @Param('tiendaId', IsValidId) tiendaId: string,
-    @User() usuarioPeticion: Usuario,
-  ) {
-    return this.productoService.create(body, tiendaId, usuarioPeticion);
+  create(@Body() body: CreateProductoDto, @TiendaReq() tienda: Tienda) {
+    return this.productoService.create(body, tienda);
   }
 
   @Delete('/:tiendaId/:productoId')
@@ -60,11 +63,8 @@ export class ProductoController {
     action: 'delete',
     resource: AppRecursos.PRODUCTO,
   })
-  deleteProducto(
-    @Param(IsValidId) params: Params,
-    @User() usuarioPeticion: Usuario,
-  ) {
-    return this.productoService.remove(params, usuarioPeticion);
+  deleteProducto(@ProductoReq() producto: Producto) {
+    return this.productoService.remove(producto);
   }
 
   @Put('/:tiendaId/:productoId')

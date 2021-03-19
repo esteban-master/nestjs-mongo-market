@@ -1,11 +1,13 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { ListarQuery, Params } from 'src/common/constants';
+import { Tienda } from '../tienda/schema';
 import { TiendaService } from '../tienda/tienda.service';
 import { Usuario } from '../usuario/schema/usuario.shema';
 import { CreateProductoDto } from './dto';
@@ -37,10 +39,18 @@ export class ProductoService {
       .exec();
   }
 
-  async findOne(productoId: string) {
-    return this.productoModel
-      .findById(productoId)
-      .populate('tienda', '_id name');
+  async findOne(productoId: string, populateTienda?: boolean) {
+    let findProducto = null;
+    if (populateTienda) {
+      findProducto = await this.productoModel
+        .findById(productoId)
+        .populate('tienda', '_id name');
+    } else {
+      findProducto = await this.productoModel.findById(productoId);
+    }
+
+    if (!findProducto) throw new NotFoundException('Producto no encontrado');
+    return findProducto;
   }
 
   async getCategorias() {
@@ -49,17 +59,8 @@ export class ProductoService {
 
   async create(
     createProductoDto: CreateProductoDto,
-    tiendaId: string,
-    usuarioPeticion: Usuario,
+    tienda: Tienda,
   ): Promise<Producto> {
-    const tienda = await this.tiendaService.findOne(tiendaId);
-
-    this.usuarioEsPropietarioDeTienda(
-      usuarioPeticion._id,
-      tienda.propietario,
-      `No eres propietario de la tienda`,
-    );
-
     const newProducto = new this.productoModel(createProductoDto);
     newProducto.tienda = tienda._id;
     await newProducto.save();
@@ -78,26 +79,8 @@ export class ProductoService {
       .populate('tienda', '_id name');
   }
 
-  async remove(params: Params, usuarioPeticion: Usuario) {
-    const tienda = await this.tiendaService.findOne(params.tiendaId);
-    const producto = await this.productoModel.findById(params.productoId);
-
-    this.usuarioEsPropietarioDeTienda(
-      usuarioPeticion._id,
-      tienda.propietario,
-      'Usuario no es propietario de la tienda',
-    );
-
-    // Ver si el producto pertenece a esa tienda
-    if (producto) {
-      this.productoPerteneceAlaTienda(
-        producto.tienda,
-        tienda._id,
-        `'El producto ${producto.name}, no pertenece a la tienda: '${tienda.name}`,
-      );
-
-      return await producto.remove();
-    }
+  async remove(producto: Producto) {
+    return await producto.remove();
   }
 
   private usuarioEsPropietarioDeTienda(

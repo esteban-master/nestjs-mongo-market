@@ -9,9 +9,8 @@ import {
 } from '@nestjs/common';
 
 import { AppRecursos } from 'src/app.roles';
-import { AuthWithRoles, User } from 'src/common/decorators';
+import { AuthWithRoles, User, TiendaReq } from 'src/common/decorators';
 import { IsValidId } from 'src/common/pipes';
-
 import { Usuario } from '../usuario/schema/usuario.shema';
 import { CreateTiendaDto } from './dto/createTienda.dto';
 import { EditTiendaDto } from './dto/editTienda.dto';
@@ -41,10 +40,9 @@ export class TiendaController {
     resource: AppRecursos.TIENDA,
   })
   getTiendasPropietario(
-    @User() usuarioPeticion: Usuario,
     @Param('usuarioId', IsValidId) usuarioId: string,
   ): Promise<Tienda[]> {
-    return this.tiendaService.findByPropietario(usuarioId, usuarioPeticion);
+    return this.tiendaService.findByPropietario(usuarioId);
   }
 
   @Post()
@@ -77,11 +75,10 @@ export class TiendaController {
     resource: AppRecursos.TIENDA,
   })
   updateTienda(
-    @Param('tiendaId', IsValidId) tiendaId: string,
+    @TiendaReq() tienda: Tienda,
     @Body() editTiendaDto: EditTiendaDto,
-    @User() usuario: Usuario,
   ) {
-    return this.tiendaService.update(tiendaId, editTiendaDto, usuario);
+    return this.tiendaService.update(tienda, editTiendaDto);
   }
 
   @Delete('/:tiendaId')
@@ -90,14 +87,8 @@ export class TiendaController {
     action: 'delete',
     resource: AppRecursos.TIENDA,
   })
-  async deleteTienda(
-    @Param('tiendaId', IsValidId) tiendaId: string,
-    @User() usuarioPeticion: Usuario,
-  ): Promise<{ _id: string }> {
-    const tiendaEliminada = await this.tiendaService.delete(
-      tiendaId,
-      usuarioPeticion,
-    );
+  async deleteTienda(@TiendaReq() tienda: Tienda): Promise<{ _id: string }> {
+    const tiendaEliminada = await this.tiendaService.delete(tienda);
     return {
       _id: tiendaEliminada._id,
     };

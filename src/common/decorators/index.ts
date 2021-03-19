@@ -1,2 +1,4 @@
 export * from './auth.decorator';
-export * from './model.decorator';
+export * from './user.decorator';
+export * from './tienda.decorator';
+export * from './producto.decotator';
