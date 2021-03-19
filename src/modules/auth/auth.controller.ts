@@ -25,16 +25,9 @@ export class AuthController {
     @User('user') usuario: Usuario,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const usuarioLogin = await this.authService.login(usuario);
-    res.cookie('auth', usuarioLogin.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      domain: 'https://martket-ts-nestjs.vercel.app',
-    });
+    const loginUsuario = await this.authService.login(usuario);
     res.status(200);
-    return usuarioLogin;
+    return loginUsuario;
   }
 
   // @UseGuards(JwtAuthGuard)
