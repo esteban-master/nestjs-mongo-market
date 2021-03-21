@@ -10,15 +10,6 @@ import { LocalAuthGuard } from './guards';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Get('/salir')
-  salir(@Res() res: Response) {
-    res.clearCookie('auth');
-    res.status(200);
-    return res.json({
-      mensaje: 'Sesion cerrada',
-    });
-  }
-
   @UseGuards(LocalAuthGuard)
   @Post('/login')
   async login(
@@ -29,10 +20,4 @@ export class AuthController {
     res.status(200);
     return loginUsuario;
   }
-
-  // @UseGuards(JwtAuthGuard)
-  // @Get('/profile')
-  // getProfile(@User('user') usuario: Usuario) {
-  //   return usuario;
-  // }
 }

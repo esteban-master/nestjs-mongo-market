@@ -45,10 +45,7 @@ export class UsuarioService {
 
   async findByEmail(email: string) {
     const usuario = await this.usuarioModel.findOne({ email });
-    if (!usuario)
-      throw new NotFoundException(
-        `Ningun usuario con email ${email} encontrado`,
-      );
+    if (!usuario) throw new NotFoundException(`${email} encontrado`);
     return usuario;
   }
 }
