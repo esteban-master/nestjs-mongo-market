@@ -39,7 +39,7 @@ export class ProductoController {
 
   @Get('/:productoId')
   getOne(@Param('productoId', IsValidId) productoId: string) {
-    return this.productoService.findOne(productoId);
+    return this.productoService.findOne(productoId, true);
   }
 
   @Get('/by/:tiendaId')
