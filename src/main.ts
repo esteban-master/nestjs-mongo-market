@@ -12,15 +12,13 @@ async function bootstrap() {
   // Para validar globalmente el class vlaidator en los DTO
   app.useGlobalPipes(new ValidationPipe());
 
-  console.log(' quye saaleee: ', process.env.NODE_ENV, process.env.PORT);
   app.enableCors({
     credentials: true,
     origin:
       process.env.NODE_ENV === 'production'
         ? [
             'https://martket-ts-nestjs.vercel.app',
-            'https://react-ts-market.herokuapp.com',
-            'http://localhost:5000',
+            'https://react-market-front.herokuapp.com/',
           ]
         : 'http://localhost:3001',
   });
