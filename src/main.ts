@@ -15,12 +15,16 @@ async function bootstrap() {
   console.log(' quye saaleee: ', process.env.NODE_ENV, process.env.PORT);
   app.enableCors({
     credentials: true,
-    origin: 'https://martket-ts-nestjs.vercel.app',
-    // process.env.NODE_ENV === 'production'
-    //   ? 'https://martket-ts-nestjs.vercel.app'
-    //   : 'http://localhost:3001',
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? [
+            'https://martket-ts-nestjs.vercel.app',
+            'https://react-ts-market.herokuapp.com',
+            'http://localhost:5000',
+          ]
+        : 'http://localhost:3001',
   });
 
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(3000);
 }
 bootstrap();
