@@ -16,10 +16,7 @@ async function bootstrap() {
     credentials: true,
     origin:
       process.env.NODE_ENV === 'production'
-        ? [
-            'https://martket-ts-nestjs.vercel.app',
-            'https://react-market-front.herokuapp.com/',
-          ]
+        ? 'https://react-market-front.herokuapp.com/'
         : 'http://localhost:3001',
   });
 
