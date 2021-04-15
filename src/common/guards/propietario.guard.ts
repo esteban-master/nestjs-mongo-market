@@ -57,7 +57,7 @@ export class PropietarioGuard implements CanActivate {
 
       default:
         throw new InternalServerErrorException(
-          'Parametros validos son: tiendaId | usuarioId | tiendaId/productoId',
+          `Parametros validos son: /:tiendaId | /:usuarioId | /:tiendaId/:productoId. Actual '${parametroSolicitud.toString()}'`,
         );
     }
   }

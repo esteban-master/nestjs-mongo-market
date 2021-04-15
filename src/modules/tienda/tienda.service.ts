@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateTiendaDto } from './dto/createTienda.dto';
@@ -62,15 +58,5 @@ export class TiendaService {
 
   async delete(tienda: Tienda) {
     return await tienda.remove();
-  }
-
-  private esPropietario(
-    idPropietario: Types.ObjectId | string,
-    idUsuarioPeticion: string,
-    mensajeError?: string,
-  ): boolean {
-    const isMatch = String(idPropietario) === String(idUsuarioPeticion);
-    if (!isMatch) throw new UnauthorizedException(mensajeError ?? '');
-    return;
   }
 }

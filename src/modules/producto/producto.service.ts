@@ -1,15 +1,8 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { ListarQuery, Params } from 'src/common/constants';
+import { ListarQuery } from 'src/common/constants';
 import { Tienda } from '../tienda/schema';
-import { TiendaService } from '../tienda/tienda.service';
-import { Usuario } from '../usuario/schema/usuario.shema';
 import { CreateProductoDto } from './dto';
 import { Producto } from './schema';
 
@@ -17,7 +10,6 @@ import { Producto } from './schema';
 export class ProductoService {
   constructor(
     @InjectModel(Producto.name) private readonly productoModel: Model<Producto>,
-    private tiendaService: TiendaService,
   ) {}
 
   async listar(queries: ListarQuery): Promise<Producto[]> {
@@ -35,6 +27,15 @@ export class ProductoService {
 
     return await this.productoModel
       .find(query)
+      .populate('tienda', '_id name')
+      .exec();
+  }
+
+  async listarUltimos(): Promise<Producto[]> {
+    return await this.productoModel
+      .find({})
+      .sort({ createdAt: -1 })
+      .limit(5)
       .populate('tienda', '_id name')
       .exec();
   }
@@ -81,29 +82,5 @@ export class ProductoService {
 
   async remove(producto: Producto) {
     return await producto.remove();
-  }
-
-  private usuarioEsPropietarioDeTienda(
-    usuarioPeticionId: string,
-    propietarioTiendaId: string | Types.ObjectId,
-    mensajeError?: string,
-  ) {
-    if (!this.isMatch(usuarioPeticionId, propietarioTiendaId.toString()))
-      throw new UnauthorizedException(mensajeError ?? '');
-    return;
-  }
-
-  private productoPerteneceAlaTienda(
-    productoTiendaId: string | Types.ObjectId,
-    tiendaId: string,
-    mensajeError?: string,
-  ) {
-    if (!this.isMatch(productoTiendaId.toString(), tiendaId))
-      throw new BadRequestException(mensajeError ?? '');
-    return;
-  }
-
-  private isMatch(id: string, id2: string) {
-    return String(id) === String(id2);
   }
 }

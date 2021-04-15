@@ -32,6 +32,11 @@ export class ProductoController {
     return this.productoService.listar(queries);
   }
 
+  @Get('/ultimos')
+  listarUltimosProductos() {
+    return this.productoService.listarUltimos();
+  }
+
   @Get('/categorias')
   findCategorias() {
     return this.productoService.getCategorias();
