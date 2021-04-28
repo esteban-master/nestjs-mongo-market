@@ -12,16 +12,16 @@ async function bootstrap() {
   // Para validar globalmente el class vlaidator en los DTO
   app.useGlobalPipes(new ValidationPipe());
 
-  app.enableCors({
-    credentials: true,
-    origin:
-      process.env.NODE_ENV === 'production'
-        ? [
-            'https://react-market-front.herokuapp.com',
-            'https://martket-ts-nestjs.vercel.app',
-          ]
-        : 'http://localhost:3001',
-  });
+  // app.enableCors({
+  //   credentials: true,
+  //   origin:
+  //     process.env.NODE_ENV === 'production'
+  //       ? [
+  //           'https://react-market-front.herokuapp.com',
+  //           'https://martket-ts-nestjs.vercel.app',
+  //         ]
+  //       : 'http://localhost:3001',
+  // });
 
   await app.listen(process.env.PORT || 3000);
 }
