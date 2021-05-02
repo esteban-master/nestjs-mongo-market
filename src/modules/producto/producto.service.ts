@@ -44,7 +44,7 @@ export class ProductoService {
     let findProducto = null;
     if (populateTienda) {
       findProducto = await this.productoModel
-        .findById(productoId)
+        .findById(productoId, { 'comments.emailCliente': 0 })
         .populate('tienda', '_id name');
     } else {
       findProducto = await this.productoModel.findById(productoId);
@@ -56,6 +56,12 @@ export class ProductoService {
 
   async getCategorias() {
     return this.productoModel.distinct('categoria');
+  }
+
+  async addComentario({ comment, productoId }: any) {
+    const findProducto = await this.productoModel.findById(productoId);
+    findProducto.comments.push(comment);
+    return await findProducto.save();
   }
 
   async create(

@@ -1,4 +1,4 @@
-import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Schema, Prop, SchemaFactory, raw } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
 @Schema()
@@ -23,6 +23,19 @@ export class Producto extends Document {
 
   @Prop()
   image: string;
+
+  @Prop([
+    raw({
+      nameCliente: { type: String },
+      title: { type: String },
+      comment: { type: String },
+      rating: { type: Number },
+      ubicacion: { type: String },
+      createdAt: { type: Date, default: Date.now },
+      emailCliente: { type: String },
+    }),
+  ])
+  comments: Record<string, any>[];
 
   @Prop({ default: Date.now })
   createdAt: Date;

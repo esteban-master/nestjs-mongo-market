@@ -52,6 +52,14 @@ export class ProductoController {
     return this.productoService.findByTienda(tiendaId);
   }
 
+  @Put('/comments/:productoId')
+  addComentario(
+    @Body() comment: any,
+    @Param('productoId', IsValidId) productoId: string,
+  ) {
+    return this.productoService.addComentario({ comment, productoId });
+  }
+
   @Post('/by/:tiendaId')
   @AuthWithRoles({
     possession: 'own',
