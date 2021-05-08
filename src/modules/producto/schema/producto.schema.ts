@@ -15,8 +15,20 @@ export class Producto extends Document {
   @Prop()
   cantidad: number;
 
-  @Prop()
-  price: number;
+  @Prop(
+    raw({
+      descuento: { type: Number },
+      originalPrice: { type: Number },
+      offerPrice: { type: Number },
+      descuentoPorcentajeInternet: { type: Number },
+      descuentoPorcentajeCard: { type: Number },
+      cardPrice: { type: Number },
+      formattedOfferPrice: { type: String },
+      formattedCardPrice: { type: String },
+      formattedOriginalPrice: { type: String },
+    }),
+  )
+  prices: Record<string, any>;
 
   @Prop({ type: Types.ObjectId, ref: 'Tienda' })
   tienda: Types.ObjectId;

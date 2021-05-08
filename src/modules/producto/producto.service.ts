@@ -67,8 +67,12 @@ export class ProductoService {
   async create(
     createProductoDto: CreateProductoDto,
     tienda: Tienda,
-  ): Promise<Producto> {
-    const newProducto = new this.productoModel(createProductoDto);
+  ): Promise<Producto | any> {
+    const prices = this.getPricesValues(createProductoDto.prices);
+    const newProducto = new this.productoModel({
+      ...createProductoDto,
+      prices,
+    });
     newProducto.tienda = tienda._id;
     await newProducto.save();
     return {
@@ -88,5 +92,86 @@ export class ProductoService {
 
   async remove(producto: Producto) {
     return await producto.remove();
+  }
+
+  private getPricesValues(prices: any) {
+    let newPrices = {};
+    if (prices.descuentoPorcentajeInternet > 0) {
+      const { originalPrice, descuentoPorcentajeInternet } = prices;
+      const descuentoResult =
+        (originalPrice * descuentoPorcentajeInternet) / 100;
+
+      let descuento = 0;
+      // Intl.NumberFormat no me formatea cuando el numero es de 4 cifras
+      if (descuentoResult.toFixed(0).length < 5) {
+        const descuentoResultSplit = descuentoResult.toFixed(0).split('');
+        descuentoResultSplit.splice(1, 0, '.');
+        descuento = Number(
+          Math.ceil(Number(descuentoResultSplit.join(''))) + '000',
+        );
+      } else {
+        descuento = Number(
+          Math.ceil(
+            Number(
+              this.formatPrice(Number(descuentoResult.toFixed(0)), 'normal'),
+            ),
+          ) + '000',
+        );
+      }
+      const offerPrice = originalPrice - descuento;
+      const formattedOfferPrice = this.formatPrice(offerPrice, 'divisa');
+      const formattedOriginalPrice = this.formatPrice(originalPrice, 'divisa');
+      newPrices = {
+        ...prices,
+        descuento,
+        offerPrice,
+        formattedOfferPrice,
+        formattedOriginalPrice,
+      };
+    }
+
+    if (prices.descuentoPorcentajeCard > 0) {
+      const { originalPrice, descuentoPorcentajeCard } = prices;
+      const descuentoResult = (originalPrice * descuentoPorcentajeCard) / 100;
+
+      let descuento = 0;
+      // Intl.NumberFormat no me formatea cuando el numero es de 4 cifras
+      if (descuentoResult.toFixed(0).length < 5) {
+        const descuentoResultSplit = descuentoResult.toFixed(0).split('');
+        descuentoResultSplit.splice(1, 0, '.');
+        descuento = Number(
+          Math.ceil(Number(descuentoResultSplit.join(''))) + '000',
+        );
+      } else {
+        descuento = Number(
+          Math.ceil(
+            Number(
+              this.formatPrice(Number(descuentoResult.toFixed(0)), 'normal'),
+            ),
+          ) + '000',
+        );
+      }
+      const cardPrice = originalPrice - descuento;
+      const formattedCardPrice = this.formatPrice(cardPrice, 'divisa');
+      newPrices = {
+        ...newPrices,
+        descuento,
+        cardPrice,
+        formattedCardPrice,
+      };
+    }
+
+    return newPrices;
+  }
+
+  private formatPrice(price: number, type: 'divisa' | 'normal') {
+    if (type === 'divisa') {
+      return Intl.NumberFormat('es-CL', {
+        style: 'currency',
+        currency: 'CLP',
+      }).format(price);
+    } else {
+      return Intl.NumberFormat('es-CL').format(price);
+    }
   }
 }

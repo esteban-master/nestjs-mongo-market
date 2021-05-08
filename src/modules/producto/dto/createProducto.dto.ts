@@ -1,4 +1,10 @@
-import { Length, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  Length,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 
 export class CreateProductoDto {
   @IsNotEmpty()
@@ -23,6 +29,10 @@ export class CreateProductoDto {
   readonly cantidad: number;
 
   @IsNotEmpty()
-  @IsNumber()
-  readonly price: number;
+  @ValidateNested()
+  readonly prices: {
+    originalPrice: number;
+    descuentoPorcentajeInternet: number;
+    descuentoPorcentajeCard: number;
+  };
 }
